@@ -1,9 +1,9 @@
 package one.digitalinnovation.personapi.service;
 
-import net.bytebuddy.asm.Advice;
 import one.digitalinnovation.personapi.dto.request.PersonDTO;
 import one.digitalinnovation.personapi.dto.response.MessageResponseDTO;
 import one.digitalinnovation.personapi.entities.Person;
+import one.digitalinnovation.personapi.exception.PersonNotFoundException;
 import one.digitalinnovation.personapi.mapper.PersonMapper;
 import one.digitalinnovation.personapi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 public class PersonService {
 
     private PersonRepository personRepository;
-    private final PersonMapper personMapper= PersonMapper.INSTANCE;
+    private final PersonMapper personMapper = PersonMapper.INSTANCE;
 
     @Autowired
-    public PersonService (PersonRepository personRepository){
+    public PersonService(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 
@@ -32,7 +32,7 @@ public class PersonService {
     }
 
 
-    public MessageResponseDTO createPerson(PersonDTO personDTO){
+    public MessageResponseDTO createPerson(PersonDTO personDTO) {
         Person personToSave = personMapper.toModel(personDTO);
         Person savedPerson = personRepository.save(personToSave);
 
@@ -42,4 +42,21 @@ public class PersonService {
                 .message("Created person with ID " + savedPerson.getId())
                 .build();
     }
+
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = verifyIfExists(id);
+        return personMapper.toDTO(person);
+
+    }
+
+    public void delete(Long id) throws PersonNotFoundException {
+        verifyIfExists(id);
+        personRepository.deleteById(id);
+    }
+
+    private Person verifyIfExists(Long id) throws PersonNotFoundException {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+    }
+
 }
