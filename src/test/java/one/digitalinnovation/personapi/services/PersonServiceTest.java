@@ -1,5 +1,6 @@
 package one.digitalinnovation.personapi.services;
 
+import one.digitalinnovation.personapi.dto.mapper.PersonMapper;
 import one.digitalinnovation.personapi.dto.request.PersonDTO;
 import one.digitalinnovation.personapi.dto.response.MessageResponseDTO;
 import one.digitalinnovation.personapi.entities.Person;
@@ -23,26 +24,30 @@ public class PersonServiceTest {
     @Mock
     private PersonRepository personRepository;
 
+    @Mock
+    private PersonMapper personMapper;
+
     @InjectMocks
     private PersonService personService;
 
     @Test
-    void testGivenPersonDTOThenReturnSavedMessage() {
+    void testGivenPersonDTOThenReturnSuccessSavedMessage() {
         PersonDTO personDTO = createFakeDTO();
         Person expectedSavedPerson = createFakeEntity();
 
+        when(personMapper.toModel(personDTO)).thenReturn(expectedSavedPerson);
         when(personRepository.save(any(Person.class))).thenReturn(expectedSavedPerson);
 
-        MessageResponseDTO expectedSuccessMessage = createExpectedMessageResponse(expectedSavedPerson.getId());
-        MessageResponseDTO succesMessage = personService.createPerson(personDTO);
+        MessageResponseDTO expectedSuccessMessage = createExpectedSuccessMessage(expectedSavedPerson.getId());
+        MessageResponseDTO successMessage = personService.createPerson(personDTO);
 
-        assertEquals(expectedSuccessMessage, succesMessage);
+        assertEquals(expectedSuccessMessage, successMessage);
     }
 
-    private MessageResponseDTO createExpectedMessageResponse(Long id) {
-        return MessageResponseDTO
-                .builder()
-                .message("Created person with ID " + id)
+    private MessageResponseDTO createExpectedSuccessMessage(Long savedPersonId) {
+        return MessageResponseDTO.builder()
+                .message("Person successfully created with ID " + savedPersonId)
                 .build();
     }
+
 }
