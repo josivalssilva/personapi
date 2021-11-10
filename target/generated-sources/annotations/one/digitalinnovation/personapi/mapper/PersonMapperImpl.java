@@ -16,7 +16,7 @@ import one.digitalinnovation.personapi.entities.Phone.PhoneBuilder;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2021-11-09T20:13:14-0300",
+    date = "2021-11-10T10:33:21-0300",
     comments = "version: 1.4.2.Final, compiler: javac, environment: Java 17 (Oracle Corporation)"
 )
 public class PersonMapperImpl implements PersonMapper {
@@ -30,7 +30,7 @@ public class PersonMapperImpl implements PersonMapper {
         PersonBuilder person = Person.builder();
 
         if ( personDTO.getBirthDate() != null ) {
-            person.birthDate( LocalDate.parse( personDTO.getBirthDate(), DateTimeFormatter.ofPattern( "dd-MM-yyyy" ) ) );
+            person.birthDate( LocalDate.parse( personDTO.getBirthDate(), DateTimeFormatter.ofPattern( "yyyy-MM-dd" ) ) );
         }
         person.id( personDTO.getId() );
         person.firstName( personDTO.getFirstName() );
